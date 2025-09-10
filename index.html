@@ -1,0 +1,2243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lann API Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #8b5cf6;
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --content-bg: #f8fafc;
+            --code-bg: #1e293b;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-primary);
+            background-color: var(--content-bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            color: #e2e8f0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            padding: 0 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-link {
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--sidebar-hover);
+            color: #f1f5f9;
+        }
+        
+        .sidebar-link.active {
+            background-color: rgba(79, 70, 229, 0.15);
+            color: #f1f5f9;
+            border-left-color: var(--primary);
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+            flex: 1;
+        }
+        
+        .content-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .content-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .content-description {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            max-width: 700px;
+        }
+        
+        .doc-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 0.75rem;
+            color: var(--primary);
+        }
+        
+        .endpoint-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .endpoint-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .endpoint-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8fafc;
+        }
+        
+        .endpoint-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .endpoint-description {
+            color: var(--text-secondary);
+        }
+        
+        .endpoint-body {
+            padding: 1.5rem;
+        }
+        
+        .endpoint-method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-right: 0.75rem;
+        }
+        
+        .method-get { background-color: #10b981; }
+        .method-post { background-color: #3b82f6; }
+        .method-put { background-color: #f59e0b; }
+        .method-delete { background-color: #ef4444; }
+        
+        .endpoint-path {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+        
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.875rem;
+        }
+        
+        .param-table th {
+            text-align: left;
+            padding: 0.75rem;
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .param-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .param-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .param-name {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #f1f5f9;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }
+        
+        .required-badge {
+            display: inline-block;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .required-yes {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .required-no {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .code-block {
+            background-color: var(--code-bg);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+        
+        .code-title {
+            font-weight: 500;
+        }
+        
+        .copy-button {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .copy-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #f1f5f9;
+        }
+        
+        .code-content {
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        
+        .code-content pre {
+            margin: 0;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        
+        .response-example {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-codes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-code {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .status-2xx { color: #10b981; }
+        .status-4xx { color: #f59e0b; }
+        .status-5xx { color: #ef4444; }
+        
+        .status-message {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .anime-card {
+            display: flex;
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .anime-poster {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 0.375rem;
+            margin-right: 1rem;
+        }
+        
+        .anime-info {
+            flex: 1;
+        }
+        
+        .anime-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .anime-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .anime-slug {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #f1f5f9;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .genre-badge {
+            display: inline-block;
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .episode-list {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .episode-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .episode-item:last-child {
+            border-bottom: none;
+        }
+        
+        .episode-title {
+            font-weight: 500;
+            color: var(--primary);
+            cursor: pointer;
+        }
+        
+        .episode-title:hover {
+            text-decoration: underline;
+        }
+        
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .download-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .download-quality {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .download-provider {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .download-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: block;
+            margin-bottom: 0.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .download-link:hover {
+            text-decoration: underline;
+        }
+        
+        .pagination-info {
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            font-size: 0.875rem;
+        }
+        
+        .pagination-item {
+            display: inline-block;
+            margin-right: 1rem;
+        }
+        
+        .pagination-label {
+            font-weight: 600;
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background-color: var(--sidebar-bg);
+            color: #e2e8f0;
+            padding: 1.5rem 0;
+            text-align: center;
+            margin-top: auto;
+            margin-left: 260px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-link:hover {
+            color: #f1f5f9;
+        }
+        
+        .footer-copyright {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        
+        /* Error Report Button */
+        .error-report-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .error-report-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4);
+        }
+        
+        .error-report-btn i {
+            font-size: 1.5rem;
+        }
+        
+        /* Floating Action Button Container */
+        .fab-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -70px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Card Grid Layout */
+        .endpoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .endpoint-grid-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .endpoint-grid-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .endpoint-grid-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8fafc;
+        }
+        
+        .endpoint-grid-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .endpoint-grid-body {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .endpoint-grid-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .endpoint-grid-path {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-top: auto;
+        }
+        
+        /* Quick Access Section */
+        .quick-access {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 0.75rem;
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+        
+        .quick-access h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .quick-access p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .quick-access-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .quick-access-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .quick-access-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Search Section */
+        .search-section {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .status-stable {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-beta {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        /* Alert Box */
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-info {
+            background-color: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            color: #0c4a6e;
+        }
+        
+        .alert-warning {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+        }
+        
+        /* API Card */
+        .api-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .api-card-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .api-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .api-card-body {
+            padding: 1.5rem;
+        }
+        
+        .api-feature {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .api-feature i {
+            color: var(--primary);
+            margin-right: 0.75rem;
+            margin-top: 0.125rem;
+        }
+        
+        .api-feature-text {
+            flex: 1;
+        }
+        
+        .api-feature-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .api-feature-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .content-title {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .param-table {
+                font-size: 0.75rem;
+            }
+            
+            .status-codes {
+                grid-template-columns: 1fr;
+            }
+            
+            .anime-card {
+                flex-direction: column;
+            }
+            
+            .anime-poster {
+                width: 100%;
+                height: 200px;
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .download-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer {
+                margin-left: 0;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .endpoint-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-access-buttons {
+                flex-direction: column;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .error-report-btn {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+            }
+            
+            .error-report-btn i {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1 class="text-xl font-bold flex items-center">
+                <i class="fas fa-play-circle mr-2 text-indigo-400"></i>
+                Lann API Docs
+            </h1>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Pendahuluan</h3>
+                <a href="#introduction" class="sidebar-link">Pengantar</a>
+                <a href="#base-url" class="sidebar-link">Base URL</a>
+                <a href="#rate-limits" class="sidebar-link">Batas Penggunaan</a>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Endpoint</h3>
+                <a href="#home-endpoint" class="sidebar-link">Home</a>
+                <a href="#anime-endpoint" class="sidebar-link">Anime</a>
+                <a href="#episodes-endpoint" class="sidebar-link">Episodes</a>
+                <a href="#ongoing-anime-endpoint" class="sidebar-link">On Going Anime</a>
+                <a href="#complete-anime-endpoint" class="sidebar-link">Complete Anime</a>
+                <a href="#genre-list-endpoint" class="sidebar-link">Genre List</a>
+                <a href="#anime-by-genre-endpoint" class="sidebar-link">Anime By Genre</a>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Referensi</h3>
+                <a href="#error-codes" class="sidebar-link">Kode Error</a>
+                <a href="#changelog" class="sidebar-link">Changelog</a>
+            </div>
+        </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="content-header">
+            <div>
+                <h1 class="content-title">Lann API Documentation</h1>
+                <p class="content-description">
+                    Dokumentasi untuk API Lann yang memungkinkan Anda mengakses data anime secara terstruktur.
+                </p>
+            </div>
+            <div class="status-badge status-stable">Stable</div>
+        </div>
+        
+        <!-- API Card -->
+        <div class="api-card">
+            <div class="api-card-header">
+                <h2 class="api-card-title">
+                    <i class="fas fa-bolt"></i>
+                    Lann API
+                </h2>
+                <p>API yang powerful dan mudah digunakan untuk mengakses data anime</p>
+            </div>
+            <div class="api-card-body">
+                <div class="api-feature">
+                    <i class="fas fa-rocket"></i>
+                    <div class="api-feature-text">
+                        <h3 class="api-feature-title">Cepat & Andal</h3>
+                        <p class="api-feature-description">Dibangun dengan teknologi terkini untuk memastikan kecepatan dan keandalan akses data</p>
+                    </div>
+                </div>
+                <div class="api-feature">
+                    <i class="fas fa-code"></i>
+                    <div class="api-feature-text">
+                        <h3 class="api-feature-title">Mudah Diintegrasikan</h3>
+                        <p class="api-feature-description">Dokumentasi yang jelas dan contoh kode untuk memudahkan integrasi dengan aplikasi Anda</p>
+                    </div>
+                </div>
+                <div class="api-feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="api-feature-text">
+                        <h3 class="api-feature-title">Aman</h3>
+                        <p class="api-feature-description">Dilengkapi dengan sistem keamanan untuk melindungi data dan privasi pengguna</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Access Section -->
+        <div class="quick-access">
+            <h2>Akses Cepat</h2>
+            <p>Jelajahi endpoint API yang paling sering digunakan</p>
+            <div class="quick-access-buttons">
+                <button class="quick-access-btn" onclick="scrollToSection('home-endpoint')">
+                    <i class="fas fa-home"></i>
+                    Home
+                </button>
+                <button class="quick-access-btn" onclick="scrollToSection('anime-endpoint')">
+                    <i class="fas fa-play-circle"></i>
+                    Anime
+                </button>
+                <button class="quick-access-btn" onclick="scrollToSection('episodes-endpoint')">
+                    <i class="fas fa-film"></i>
+                    Episodes
+                </button>
+                <button class="quick-access-btn" onclick="scrollToSection('ongoing-anime-endpoint')">
+                    <i class="fas fa-tv"></i>
+                    On Going
+                </button>
+            </div>
+        </div>
+        
+        <!-- Search Section -->
+        <div class="search-section">
+            <h3 class="text-lg font-semibold mb-3">Cari Endpoint</h3>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Cari endpoint atau fitur..." id="searchInput">
+            </div>
+        </div>
+        
+        <!-- Endpoint Grid -->
+        <div class="endpoint-grid" id="endpointGrid">
+            <div class="endpoint-grid-card" data-endpoint="home">
+                <div class="endpoint-grid-header">
+                    <h3 class="endpoint-grid-title">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </h3>
+                </div>
+                <div class="endpoint-grid-body">
+                    <p class="endpoint-grid-description">Mendapatkan data anime dari halaman utama</p>
+                    <span class="endpoint-grid-path">/home</span>
+                </div>
+            </div>
+            
+            <div class="endpoint-grid-card" data-endpoint="anime">
+                <div class="endpoint-grid-header">
+                    <h3 class="endpoint-grid-title">
+                        <i class="fas fa-play-circle"></i>
+                        Anime
+                    </h3>
+                </div>
+                <div class="endpoint-grid-body">
+                    <p class="endpoint-grid-description">Mendapatkan detail informasi tentang anime tertentu</p>
+                    <span class="endpoint-grid-path">/anime/{slug}</span>
+                </div>
+            </div>
+            
+            <div class="endpoint-grid-card" data-endpoint="episodes">
+                <div class="endpoint-grid-header">
+                    <h3 class="endpoint-grid-title">
+                        <i class="fas fa-film"></i>
+                        Episodes
+                    </h3>
+                </div>
+                <div class="endpoint-grid-body">
+                    <p class="endpoint-grid-description">Mendapatkan detail dan link download untuk episode tertentu</p>
+                    <span class="endpoint-grid-path">/anime/{slug}/episodes/{episode}</span>
+                </div>
+            </div>
+            
+            <div class="endpoint-grid-card" data-endpoint="ongoing-anime">
+                <div class="endpoint-grid-header">
+                    <h3 class="endpoint-grid-title">
+                        <i class="fas fa-tv"></i>
+                        On Going Anime
+                    </h3>
+                </div>
+                <div class="endpoint-grid-body">
+                    <p class="endpoint-grid-description">Menampilkan semua data anime yang sedang tayang</p>
+                    <span class="endpoint-grid-path">/ongoing-anime/{page}</span>
+                </div>
+            </div>
+            
+            <div class="endpoint-grid-card" data-endpoint="complete-anime">
+                <div class="endpoint-grid-header">
+                    <h3 class="endpoint-grid-title">
+                        <i class="fas fa-check-circle"></i>
+                        Complete Anime
+                    </h3>
+                </div>
+                <div class="endpoint-grid-body">
+                    <p class="endpoint-grid-description">Menampilkan semua data anime yang sudah tamat</p>
+                    <span class="endpoint-grid-path">/complete-anime/{page}</span>
+                </div>
+            </div>
+            
+            <div class="endpoint-grid-card" data-endpoint="genre-list">
+                <div class="endpoint-grid-header">
+                    <h3 class="endpoint-grid-title">
+                        <i class="fas fa-list"></i>
+                        Genre List
+                    </h3>
+                </div>
+                <div class="endpoint-grid-body">
+                    <p class="endpoint-grid-description">Menampilkan semua genre anime yang tersedia</p>
+                    <span class="endpoint-grid-path">/genre</span>
+                </div>
+            </div>
+            
+            <div class="endpoint-grid-card" data-endpoint="anime-by-genre">
+                <div class="endpoint-grid-header">
+                    <h3 class="endpoint-grid-title">
+                        <i class="fas fa-filter"></i>
+                        Anime By Genre
+                    </h3>
+                </div>
+                <div class="endpoint-grid-body">
+                    <p class="endpoint-grid-description">Menampilkan semua data anime berdasarkan genre tertentu</p>
+                    <span class="endpoint-grid-path">/genre/{slug}?page={page}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Introduction Section -->
+        <section id="introduction" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-book-open"></i>
+                Pengantar
+            </h2>
+            
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <p class="mb-4">
+                    Selamat datang di dokumentasi API Lann. API ini menyediakan akses terprogram ke data anime melalui endpoint yang sederhana dan konsisten.
+                </p>
+                
+                <div class="alert alert-info">
+                    <p><strong>Info:</strong> API Lann dirancang untuk memudahkan pengembang mengintegrasikan data anime ke dalam aplikasi mereka dengan cepat dan efisien.</p>
+                </div>
+                
+                <p>
+                    Dengan API ini, Anda dapat mengakses informasi tentang anime yang sedang tayang, anime yang sudah tamat, detail anime, daftar episode, link download, dan masih banyak lagi.
+                </p>
+            </div>
+        </section>
+        
+        <!-- Base URL Section -->
+        <section id="base-url" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-link"></i>
+                Base URL
+            </h2>
+            
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <p class="mb-4">
+                    Semua endpoint API dapat diakses melalui base URL berikut:
+                </p>
+                
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-4">
+                    <p class="font-medium text-indigo-800">Base URL</p>
+                    <code class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded mt-1 inline-block">
+                        https://lnn-api.vercel.app/api
+                    </code>
+                </div>
+                
+                <p>
+                    Semua endpoint mengembalikan respons dalam format JSON dan mendukung Cross-Origin Resource Sharing (CORS) untuk memungkinkan penggunaan dari aplikasi browser.
+                </p>
+            </div>
+        </section>
+        
+        <!-- Rate Limits Section -->
+        <section id="rate-limits" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-tachometer-alt"></i>
+                Batas Penggunaan
+            </h2>
+            
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <p class="mb-4">
+                    API ini memiliki batas penggunaan untuk memastikan kestabilan layanan dan ketersediaan untuk semua pengguna.
+                </p>
+                
+                <div class="overflow-x-auto">
+                    <table class="param-table w-full">
+                        <thead>
+                            <tr>
+                                <th>Tipe Pengguna</th>
+                                <th>Batas per Jam</th>
+                                <th>Batas per Hari</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Umum</td>
+                                <td>100</td>
+                                <td>1,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="alert alert-warning mt-4">
+                    <p><i class="fas fa-exclamation-triangle mr-2"></i> Jika Anda melebihi batas penggunaan, Anda akan menerima respons dengan status kode <strong>429 Too Many Requests</strong>.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Home Endpoint Section -->
+        <section id="home-endpoint" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-home"></i>
+                Endpoint Home
+            </h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <h3 class="endpoint-title">Home Data</h3>
+                    <p class="endpoint-description">Mendapatkan data anime dari halaman utama</p>
+                </div>
+                
+                <div class="endpoint-body">
+                    <div class="mb-4">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/home</code>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3">Endpoint Terkait</h4>
+                    <ul class="list-disc pl-5 mb-4">
+                        <li><code class="bg-gray-100 px-1 rounded">/ongoing-anime/{page}</code> → Menampilkan semua data anime yang sedang tayang</li>
+                        <li><code class="bg-gray-100 px-1 rounded">/complete-anime/{page}</code> → Menampilkan semua data anime yang sudah tamat</li>
+                    </ul>
+                    
+                    <h4 class="font-semibold mb-3">Contoh Permintaan</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">JavaScript</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-javascript">fetch('https://lnn-api.vercel.app/api/home')
+  .then(response => response.json())
+  .then(data => console.log(data));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3">Contoh Respons</h4>
+                    <div class="response-example">
+                        <pre>{
+  "data": {
+    "ongoing_anime": [
+      {
+        "title": "Metallic Rouge",
+        "slug": "metal-rouge-sub-indo",
+        "poster": "https://otakudesu.media/wp-content/uploads/2024/01/Metallic-Rouge-Sub-Indo.jpg",
+        "current_episode": "Episode 3",
+        "release_day": "Kamis",
+        "newest_release_date": "25 Jan",
+        "otakudesu_url": "https://otakudesu.media/anime/metal-rouge-sub-indo/"
+      },
+      {
+        "title": "Mahou Shoujo ni Akogarete",
+        "slug": "mahou-shoujo-akogarete-sub-indo",
+        "poster": "https://otakudesu.media/wp-content/uploads/2024/01/139414l.jpg",
+        "current_episode": "Episode 4",
+        "release_day": "Kamis",
+        "newest_release_date": "25 Jan",
+        "otakudesu_url": "https://otakudesu.media/anime/mahou-shoujo-akogarete-sub-indo/"
+      }
+    ],
+    "complete_anime": [
+      {
+        "title": "Dr. Stone Season 3 Part 2",
+        "slug": "drstn-s3-p2-sub-indo",
+        "poster": "https://otakudesu.media/wp-content/uploads/2024/01/Dr.-Stone-Season-3-Part-2-Sub-Indo.jpg",
+        "episode_count": "11",
+        "rating": "8.35",
+        "last_release_date": "15 Jan",
+        "otakudesu_url": "https://otakudesu.media/anime/drstn-s3-p2-sub-indo/"
+      },
+      {
+        "title": "Shy",
+        "slug": "shy-sub-indo",
+        "poster": "https://otakudesu.media/wp-content/uploads/2024/01/Shy-Sub-Indo.jpg",
+        "episode_count": "12",
+        "rating": "6.75",
+        "last_release_date": "15 Jan",
+        "otakudesu_url": "https://otakudesu.media/anime/shy-sub-indo/"
+      }
+    ]
+  }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Anime Endpoint Section -->
+        <section id="anime-endpoint" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-play-circle"></i>
+                Endpoint Anime
+            </h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <h3 class="endpoint-title">Detail Anime</h3>
+                    <p class="endpoint-description">Mendapatkan detail informasi tentang anime tertentu</p>
+                </div>
+                
+                <div class="endpoint-body">
+                    <div class="mb-4">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/anime/{slug}</code>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3">Parameter</h4>
+                    <div class="overflow-x-auto">
+                        <table class="param-table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Tipe</th>
+                                    <th>Required</th>
+                                    <th>Deskripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">slug</span></td>
+                                    <td>String</td>
+                                    <td><span class="required-badge required-yes">Ya</span></td>
+                                    <td>Slug anime yang ingin didapatkan detailnya</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Permintaan</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">JavaScript</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-javascript">fetch('https://lnn-api.vercel.app/api/anime/sousou')
+  .then(response => response.json())
+  .then(data => console.log(data));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Respons</h4>
+                    <div class="response-example">
+                        <pre>{
+    "data": {
+        "title": "Sousou no Frieren",
+        "japanese_title": "葬送のフリーレン",
+        "poster": "https://otakudesu.cloud/wp-content/uploads/2023/09/Sousou-no-Frieren.jpg",
+        "rating": "8.89",
+        "produser": "TOHO animation, Shogakukan",
+        "type": "TV",
+        "status": "Ongoing",
+        "episode_count": "Unknown",
+        "duration": "24 Min.",
+        "release_date": "Sep 29, 2023",
+        "studio": "Madhouse",
+        "genres": [
+            {
+                "name": "Adventure",
+                "slug": "adventure",
+                "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/adventure/"
+            },
+            {
+                "name": "Drama",
+                "slug": "drama",
+                "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/drama/"
+            },
+            {
+                "name": "Fantasy",
+                "slug": "fantasy",
+                "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/fantasy/"
+            },
+            {
+                "name": "Shounen",
+                "slug": "shounen",
+                "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/shounen/"
+            }
+        ],
+        "synopsis": "",
+        "batch": null,
+        "episode_lists": [
+            {
+                "episode": "Sousou no Frieren Episode 1 Subtitle Indonesia",
+                "slug": "snf-episode-1-sub-indo",
+                "otakudesu_url": "https://otakudesu.cloud/episode/snf-episode-1-sub-indo/"
+            },
+            {
+                "episode": "Sousou no Frieren Episode 2 Subtitle Indonesia",
+                "slug": "snf-episode-2-sub-indo",
+                "otakudesu_url": "https://otakudesu.cloud/episode/snf-episode-2-sub-indo/"
+            }
+        ],
+        "recommendations": [
+            {
+                "title": "Buta no Liver wa Kanetsu Shiro",
+                "slug": "buta-shiro-sub-indo",
+                "poster": "https://otakudesu.cloud/wp-content/uploads/2024/03/Buta-no-Liver-wa-Kanetsu-Shiro-Sub-Indo.jpg",
+                "otakudesu_url": "https://otakudesu.cloud/anime/buta-shiro-sub-indo/"
+            },
+            {
+                "title": "Hikikomari Kyuuketsuki no Monmon",
+                "slug": "hikikomari-monmon-sub-indo",
+                "poster": "https://otakudesu.cloud/wp-content/uploads/2024/03/Hikikomari-Kyuuketsuki-no-Monmon-Sub-Indo.jpg",
+                "otakudesu_url": "https://otakudesu.cloud/anime/hikikomari-monmon-sub-indo/"
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Episodes Endpoint Section -->
+        <section id="episodes-endpoint" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-film"></i>
+                Endpoint Episodes
+            </h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <h3 class="endpoint-title">Detail Episode</h3>
+                    <p class="endpoint-description">Mendapatkan detail dan link download untuk episode tertentu</p>
+                </div>
+                
+                <div class="endpoint-body">
+                    <div class="mb-4">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/anime/{slug}/episodes/{episode}</code>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3">Parameter</h4>
+                    <div class="overflow-x-auto">
+                        <table class="param-table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Tipe</th>
+                                    <th>Required</th>
+                                    <th>Deskripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">slug</span></td>
+                                    <td>String</td>
+                                    <td><span class="required-badge required-yes">Ya</span></td>
+                                    <td>Slug anime</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">episode</span></td>
+                                    <td>Number</td>
+                                    <td><span class="required-badge required-yes">Ya</span></td>
+                                    <td>Nomor episode</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Permintaan</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">JavaScript</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-javascript">fetch('https://lnn-api.vercel.app/api/anime/akuyaku-reijou-lv-99-sub-indo/episodes/1')
+  .then(response => response.json())
+  .then(data => console.log(data));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Respons</h4>
+                    <div class="response-example">
+                        <pre>{
+    "data": {
+        "episode": "Akuyaku Reijou Level 99 Episode 1 Subtitle Indonesia",
+        "anime": {
+            "slug": "akuyaku-reijou-lv-99-sub-indo",
+            "otakudesu_url": "https://otakudesu.cloud/anime/akuyaku-reijou-lv-99-sub-indo/"
+        },
+        "has_next_episode": true,
+        "next_episode": {
+            "slug": "alr99-episode-2-sub-indo",
+            "otakudesu_url": "https://otakudesu.cloud/episode/alr99-episode-2-sub-indo/"
+        },
+        "has_previous_episode": false,
+        "previous_episode": null,
+        "stream_url": "https://desustream.me/beta/stream/?id=YWdsMVR0b3FuL0Q3NnpJUHAxb3R3dz09",
+        "download_urls": {
+            "mp4": [
+                {
+                    "resolution": "360p",
+                    "urls": [
+                        {
+                            "provider": "ODFiles",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVINWpYWTJuNXdCcjZmTHJ1Ym1aN3RrQ1ZUZmZ6b3cySU53RGpubEZNSnZrdFpDOWp4dDR5OXZvZEpwVTdIVHR5YURJUU9weEFSVzBveHJleWNLWm1h"
+                        },
+                        {
+                            "provider": "Pdrain",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqZ0paWDVISDB3Y00="
+                        }
+                    ]
+                },
+                {
+                    "resolution": "480p",
+                    "urls": [
+                        {
+                            "provider": "ODFiles",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVINWpYWTJuNXdCcjZmTHJ1Ym1aNncyQ1JPTFBHaXpXVlMyanJubEZNSnZrdFpDOWp4dDR5OXZvZEpwVTdIVHR5YURJUUpxUkFSVzBveHJleWNLWm1h"
+                        },
+                        {
+                            "provider": "Pdrain",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqaXNNSlBMSDhETTg="
+                        }
+                    ]
+                },
+                {
+                    "resolution": "720p",
+                    "urls": [
+                        {
+                            "provider": "ODFiles",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVINWpYWTJuNXdCcjZmTHJ1Ym1aN3FreVpSZUxMMm1EcFN6bnJubEZNSnZrdFpDOWp4dDR5OXZvZEpwVTdIVHR5YURJUUtveEFSVzBveHJleWNLWm1h"
+                        },
+                        {
+                            "provider": "Pdrain",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqajV4Y2ZEbXppMFA="
+                        }
+                    ]
+                }
+            ],
+            "mkv": [
+                {
+                    "resolution": "480p",
+                    "urls": [
+                        {
+                            "provider": "ODFiles",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVINWpYWTJuNXdCcjZmTHJ1Ym1aNi95RFpQZC9XcDAyd2N3R2pubEZNSnZrdFpDOWp4dDR5OXZvZEpwVTdIVHR5YURJUncrbFpWVFJjeHQ2K2ZLOXFlMnZWQw=="
+                        },
+                        {
+                            "provider": "Pdrain",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqZ2RFYXJiazNTQTc="
+                        }
+                    ]
+                },
+                {
+                    "resolution": "720p",
+                    "urls": [
+                        {
+                            "provider": "ODFiles",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVINWpYWTJuNXdCcjZmTHJ1Ym1aN3ZtVFZLTDZEN3lHWWQyMy9ubEZNSnZrdFpDOWp4dDR5OXZvZEpwVTdIVHR5YURJUncrbFpXUnhjeHQ2K2ZLOXFlMnZWQw=="
+                        },
+                        {
+                            "provider": "Pdrain",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqZ2NQYkxTbjNoUUk="
+                        }
+                    ]
+                },
+                {
+                    "resolution": "1080p",
+                    "urls": [
+                        {
+                            "provider": "ODFiles",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVINWpYWTJuNXdCcjZmTHJ1Ym1aN3F4SFlKYy9Yb3dTY1B3empubEZNSnZrdFpDOWp4dDR5OXZvZEpwVTdIVHR5YURJUncrbFpRUlI5eDZleVpOb0xZeHV4RHFnPT0="
+                        },
+                        {
+                            "provider": "Pdrain",
+                            "url": "https://desudrive.com/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqbmxTV0wzeTBCMFQ="
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- On Going Anime Endpoint Section -->
+        <section id="ongoing-anime-endpoint" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-tv"></i>
+                Endpoint On Going Anime
+            </h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <h3 class="endpoint-title">On Going Anime</h3>
+                    <p class="endpoint-description">Menampilkan semua data anime yang sedang tayang</p>
+                </div>
+                
+                <div class="endpoint-body">
+                    <div class="mb-4">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/ongoing-anime/{page}</code>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3">Parameter</h4>
+                    <div class="overflow-x-auto">
+                        <table class="param-table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Tipe</th>
+                                    <th>Required</th>
+                                    <th>Default</th>
+                                    <th>Deskripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">page</span></td>
+                                    <td>Number</td>
+                                    <td><span class="required-badge required-yes">Ya</span></td>
+                                    <td>-</td>
+                                    <td>Nomor halaman</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Permintaan</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">JavaScript</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-javascript">fetch('https://lnn-api.vercel.app/api/ongoing-anime/1')
+  .then(response => response.json())
+  .then(data => console.log(data));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Respons</h4>
+                    <div class="response-example">
+                        <pre>{
+    "data": {
+        "paginationData": {
+            "current_page": 1,
+            "last_visible_page": 3,
+            "has_next_page": true,
+            "next_page": 2,
+            "has_previous_page": false,
+            "previous_page": null
+        },
+        "ongoingAnimeData": [
+            {
+                "title": "Akuyaku Reijou Level 99",
+                "slug": "akuyaku-reijou-lv-99-sub-indo",
+                "poster": "https://otakudesu.cloud/wp-content/uploads/2024/01/Akuyaku-Reijou-Level-99.jpg",
+                "current_episode": "Episode 11",
+                "release_day": "Rabu",
+                "newest_release_date": "20 Mar",
+                "otakudesu_url": "https://otakudesu.cloud/anime/akuyaku-reijou-lv-99-sub-indo/"
+            },
+            {
+                "title": "Shaman King: Flowers",
+                "slug": "shaman-king-flowers-sub-indo",
+                "poster": "https://otakudesu.cloud/wp-content/uploads/2024/01/Shaman-King-Flowers-Sub-Indo.jpg",
+                "current_episode": "Episode 11",
+                "release_day": "Rabu",
+                "newest_release_date": "20 Mar",
+                "otakudesu_url": "https://otakudesu.cloud/anime/shaman-king-flowers-sub-indo/"
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Complete Anime Endpoint Section -->
+        <section id="complete-anime-endpoint" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-check-circle"></i>
+                Endpoint Complete Anime
+            </h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <h3 class="endpoint-title">Complete Anime</h3>
+                    <p class="endpoint-description">Menampilkan semua data anime yang sudah tamat</p>
+                </div>
+                
+                <div class="endpoint-body">
+                    <div class="mb-4">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/complete-anime/{page}</code>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3">Parameter</h4>
+                    <div class="overflow-x-auto">
+                        <table class="param-table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Tipe</th>
+                                    <th>Required</th>
+                                    <th>Default</th>
+                                    <th>Deskripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">page</span></td>
+                                    <td>Number</td>
+                                    <td><span class="required-badge required-yes">Ya</span></td>
+                                    <td>-</td>
+                                    <td>Nomor halaman</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Permintaan</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">JavaScript</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-javascript">fetch('https://lnn-api.vercel.app/api/complete-anime/1')
+  .then(response => response.json())
+  .then(data => console.log(data));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Respons</h4>
+                    <div class="response-example">
+                        <pre>{
+    "data": {
+        "paginationData": {
+            "current_page": 1,
+            "last_visible_page": 54,
+            "has_next_page": true,
+            "next_page": 2,
+            "has_previous_page": false,
+            "previous_page": null
+        },
+        "completeAnimeData": [
+            {
+                "title": "Buta no Liver wa Kanetsu Shiro",
+                "slug": "buta-shiro-sub-indo",
+                "poster": "https://otakudesu.cloud/wp-content/uploads/2024/03/Buta-no-Liver-wa-Kanetsu-Shiro-Sub-Indo.jpg",
+                "episode_count": "12",
+                "rating": "6.32",
+                "last_release_date": "16 Mar",
+                "otakudesu_url": "https://otakudesu.cloud/anime/buta-shiro-sub-indo/"
+            },
+            {
+                "title": "Hikikomari Kyuuketsuki no Monmon",
+                "slug": "hikikomari-monmon-sub-indo",
+                "poster": "https://otakudesu.cloud/wp-content/uploads/2024/03/Hikikomari-Kyuuketsuki-no-Monmon-Sub-Indo.jpg",
+                "episode_count": "12",
+                "rating": "7.20",
+                "last_release_date": "16 Mar",
+                "otakudesu_url": "https://otakudesu.cloud/anime/hikikomari-monmon-sub-indo/"
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Genre List Endpoint Section -->
+        <section id="genre-list-endpoint" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-list"></i>
+                Endpoint Genre List
+            </h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <h3 class="endpoint-title">Genre List</h3>
+                    <p class="endpoint-description">Menampilkan semua genre anime yang tersedia</p>
+                </div>
+                
+                <div class="endpoint-body">
+                    <div class="mb-4">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/genre</code>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Permintaan</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">JavaScript</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-javascript">fetch('https://lnn-api.vercel.app/api/genre')
+  .then(response => response.json())
+  .then(data => console.log(data));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Respons</h4>
+                    <div class="response-example">
+                        <pre>{
+  "data": [
+    {
+      "name": "Action",
+      "slug": "action",
+      "otakudesu_url": "https://otakudesu.media/genres/action/"
+    },
+    {
+      "name": "Adventure",
+      "slug": "adventure",
+      "otakudesu_url": "https://otakudesu.media/genres/adventure/"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Anime By Genre Endpoint Section -->
+        <section id="anime-by-genre-endpoint" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-filter"></i>
+                Endpoint Anime By Genre
+            </h2>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <h3 class="endpoint-title">Anime By Genre</h3>
+                    <p class="endpoint-description">Menampilkan semua data anime berdasarkan genre tertentu</p>
+                </div>
+                
+                <div class="endpoint-body">
+                    <div class="mb-4">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/genre/{slug}?page={page}</code>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3">Parameter</h4>
+                    <div class="overflow-x-auto">
+                        <table class="param-table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Tipe</th>
+                                    <th>Required</th>
+                                    <th>Default</th>
+                                    <th>Deskripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">slug</span></td>
+                                    <td>String</td>
+                                    <td><span class="required-badge required-yes">Ya</span></td>
+                                    <td>-</td>
+                                    <td>Slug genre</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">page</span></td>
+                                    <td>Number</td>
+                                    <td><span class="required-badge required-no">Tidak</span></td>
+                                    <td>1</td>
+                                    <td>Nomor halaman</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Permintaan</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">JavaScript</span>
+                            <button class="copy-button" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-javascript">fetch('https://lnn-api.vercel.app/api/genre/fantasy?page=1')
+  .then(response => response.json())
+  .then(data => console.log(data));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-3 mt-6">Contoh Respons</h4>
+                    <div class="response-example">
+                        <pre>{
+    "data": {
+        "anime": [
+            {
+                "title": "One Piece",
+                "slug": "op-sub-indo",
+                "poster": "https://otakudesu.cloud/wp-content/uploads/2021/05/One-Piece-Sub-Indo.jpg",
+                "rating": "8.54",
+                "episode_count": "?",
+                "season": "Fall 1999",
+                "studio": "Toei Animation",
+                "genres": [
+                    {
+                        "name": "Action",
+                        "slug": "action",
+                        "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/action/"
+                    },
+                    {
+                        "name": "Adventure",
+                        "slug": "adventure",
+                        "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/adventure/"
+                    },
+                    {
+                        "name": "Comedy",
+                        "slug": "comedy",
+                        "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/comedy/"
+                    },
+                    {
+                        "name": "Drama",
+                        "slug": "drama",
+                        "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/drama/"
+                    },
+                    {
+                        "name": "Fantasy",
+                        "slug": "fantasy",
+                        "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/fantasy/"
+                    },
+                    {
+                        "name": "Shounen",
+                        "slug": "shounen",
+                        "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/shounen/"
+                    },
+                    {
+                        "name": "Super Power",
+                        "slug": "super-power",
+                        "otakudesu_url": "https://otakudesu.cloudhttps://otakudesu.cloud/genres/super-power/"
+                    }
+                ],
+                "synopsis": "Dulu, ada seorang bajak laut terkenal di seluruh lautan bernama Gol D. Roger. Ia merupakan seorang raja bajak laut yang telah berlayar mengarungi seluruh Grand Line, sayangnya ia ditangkap pemerintah dan telah dieksekusi mati. Sesaat sebelum kematiannya, Ia mengumumkan kepada dunia bahwa dirinya menyimpan sebuah harta karun bernama One Piece, sebuah harta karun yang kini menjadi incaran seluruh bajak laut yang ada di dunia.Di Era Bajak Laut saat ini, ada seorang remaja bernama Monkey D. Luffy yang memiliki cita-cita untuk menjadi seorang Raja Bajak Laut. Namun Luffy sadar bahwa ia tidak bisa melakukannya sendiri, sembari dalam perjalanan ia juga mencari kru dan bertemu dengan teman-temannya yang baru. Berbeda dengan bajak laut lain yang ganas dan jahat, Luffy bersama teman-temannya berlayar murni atas dasar petualangan serta mencari tempat tempat baru yang akan muncul di hadapan mereka.Di perjalanan inilah cerita mereka dimulai, mampukan Luffy bersama teman-temannya mencapai impian mereka?(Info: Episode sebelumnya akan ditambahkan secara berkala)",
+                "otakudesu_url": "https://otakudesu.cloud/anime/op-sub-indo/"
+            }
+        ],
+        "pagination": {
+            "current_page": 1,
+            "last_visible_page": 32,
+            "has_next_page": true,
+            "next_page": 2,
+            "has_previous_page": false,
+            "previous_page": null
+        }
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Error Codes Section -->
+        <section id="error-codes" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                Kode Error
+            </h2>
+            
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <p class="mb-4">
+                    API ini menggunakan kode status HTTP standar untuk menunjukkan keberhasilan atau kegagalan permintaan.
+                </p>
+                
+                <div class="status-codes">
+                    <div class="status-card">
+                        <div class="status-code status-2xx">200</div>
+                        <div class="status-message">OK</div>
+                        <div class="status-description">Permintaan berhasil diproses</div>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-code status-4xx">400</div>
+                        <div class="status-message">Bad Request</div>
+                        <div class="status-description">Permintaan tidak valid, periksa parameter</div>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-code status-4xx">404</div>
+                        <div class="status-message">Not Found</div>
+                        <div class="status-description">Resource tidak ditemukan</div>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-code status-4xx">429</div>
+                        <div class="status-message">Too Many Requests</div>
+                        <div class="status-description">Melebihi batas rate limit</div>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-code status-5xx">500</div>
+                        <div class="status-message">Internal Server Error</div>
+                        <div class="status-description">Kesalahan pada server</div>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-code status-5xx">503</div>
+                        <div class="status-message">Service Unavailable</div>
+                        <div class="status-description">Server sedang tidak tersedia</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Changelog Section -->
+        <section id="changelog" class="doc-section">
+            <h2 class="section-title">
+                <i class="fas fa-history"></i>
+                Changelog
+            </h2>
+            
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <div class="space-y-6">
+                    <div class="border-l-4 border-indigo-500 pl-4">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-semibold text-lg">v1.0.0</h3>
+                            <span class="text-sm text-gray-500">25 Juli 2023</span>
+                        </div>
+                        <p class="text-gray-600 mt-1">Rilis awal API Lann</p>
+                        <ul class="mt-2 text-sm text-gray-600 list-disc pl-5">
+                            <li>Endpoint /home untuk mendapatkan data home</li>
+                            <li>Endpoint /anime/{slug} untuk mendapatkan detail anime</li>
+                            <li>Endpoint /anime/{slug}/episodes/{episode} untuk mendapatkan detail episode</li>
+                            <li>Endpoint /ongoing-anime/{page} untuk mendapatkan data anime yang sedang tayang</li>
+                            <li>Endpoint /complete-anime/{page} untuk mendapatkan data anime yang sudah tamat</li>
+                            <li>Endpoint /genre untuk mendapatkan daftar genre</li>
+                            <li>Endpoint /genre/{slug}?page={page} untuk mendapatkan data anime berdasarkan genre</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">API Documentation</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Contact</a>
+            </div>
+            <div class="footer-copyright">
+                Copyright © 2025 Lann Zephry, Inc. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Error Report Button -->
+    <div class="fab-container">
+        <div class="tooltip">
+            <button class="error-report-btn" id="errorReportBtn" onclick="reportError()">
+                <i class="fas fa-bug"></i>
+            </button>
+            <span class="tooltiptext">Laporkan Error</span>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (event) => {
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !mobileMenuToggle.contains(event.target) && 
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+        
+        // Copy code functionality
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // Change button icon temporarily
+            const originalIcon = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                button.innerHTML = originalIcon;
+            }, 2000);
+        }
+        
+        // Scrollspy for sidebar navigation
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.sidebar-link');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const scrollPosition = window.scrollY + 100;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollPosition >= sectionTop && scrollPosition < (sectionTop + sectionHeight)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                    }
+                }
+            });
+        });
+        
+        // Scroll to section function
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                window.scrollTo({
+                    top: section.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        // Report error function
+        function reportError() {
+            const phoneNumber = "6289518141833";
+            const message = "Hai bang, ada error di endpoint [nama endpoint]";
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const endpointCards = document.querySelectorAll('.endpoint-grid-card');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            endpointCards.forEach(card => {
+                const title = card.querySelector('.endpoint-grid-title').textContent.toLowerCase();
+                const description = card.querySelector('.endpoint-grid-description').textContent.toLowerCase();
+                const path = card.querySelector('.endpoint-grid-path').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm) || path.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
